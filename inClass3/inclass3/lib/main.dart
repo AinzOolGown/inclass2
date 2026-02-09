@@ -92,6 +92,7 @@ class _RunMyAppState extends State<RunMyApp> {
                       color: _themeMode.name == "dark" ? Colors.white : Colors.black,
                     ),
                     child: Icon(_themeMode.name == "dark" ? Icons.dark_mode : Icons.light_mode),
+                    //same bug as the switch, very probable that its the switch causing the issue
                   )
                 ],
               )
