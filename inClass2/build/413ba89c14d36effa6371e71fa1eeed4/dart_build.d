@@ -1,0 +1,1 @@
+ C:\\Users\\bruno\\Desktop\\mad\\inclass2\\inclass2\\build\\413ba89c14d36effa6371e71fa1eeed4\\dart_build_result.json: 
