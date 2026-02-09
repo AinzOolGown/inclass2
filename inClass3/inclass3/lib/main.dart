@@ -81,6 +81,12 @@ class _RunMyAppState extends State<RunMyApp> {
                     },
                     //minor bug: switch does not work properly for the first swtich, fine afterwards
                   ),
+                  IconTheme(
+                    data: IconThemeData(
+                      color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+                    ),
+                    child: Icon(_themeMode.name == "dark" ? Icons.dark_mode : Icons.light_mode),
+                  )
                 ],
               ),
             ],
