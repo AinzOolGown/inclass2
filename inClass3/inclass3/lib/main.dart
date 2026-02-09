@@ -71,10 +71,12 @@ class _RunMyAppState extends State<RunMyApp> {
               
               const SizedBox(height: 10),
 
-              // PART 1 TASK: Controls
+              //Replace with a switch widget to toggle between themes
+              //Just the elevated buttons need to be replaced
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
+                  /*
                   ElevatedButton(
                     onPressed: () => changeTheme(ThemeMode.light),
                     child: const Text('Light Theme'),
@@ -82,6 +84,13 @@ class _RunMyAppState extends State<RunMyApp> {
                   ElevatedButton(
                     onPressed: () => changeTheme(ThemeMode.dark),
                     child: const Text('Dark Theme'),
+                  ),
+                  */
+                  Switch(
+                    value: _themeMode == ThemeMode.dark,
+                    onChanged: (value) {
+                      changeTheme(value ? ThemeMode.dark : ThemeMode.light);
+                    },
                   ),
                 ],
               ),
