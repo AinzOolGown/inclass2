@@ -66,34 +66,49 @@ class _ValentineHomeState extends State<ValentineHome>  {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Cupid\'s Canvas')),
-      body: Column(
-        children: [
-          const SizedBox(height: 16),
-          DropdownButton<String>(
-            value: selectedEmoji,
-            items: emojiOptions
-                .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                .toList(),
-            onChanged: (value) => setState(() => selectedEmoji = value ?? selectedEmoji),
+    return MaterialApp(
+      home: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFFFC1E3), Color.fromARGB(255, 251, 61, 61)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: Center(
-              child: CustomPaint(
-                size: Size(300, 300),
-                painter: HeartEmojiPainter(type: selectedEmoji, mod: _modifier),
-              ),
+        ),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+              title: const Text('Cupid\'s Canvas'),
+              backgroundColor: Colors.transparent,
             ),
+          body: Column(
+            children: [
+              const SizedBox(height: 16),
+              DropdownButton<String>(
+                value: selectedEmoji,
+                items: emojiOptions
+                    .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                    .toList(),
+                onChanged: (value) => setState(() => selectedEmoji = value ?? selectedEmoji),
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: Center(
+                  child: CustomPaint(
+                    size: Size(300, 300),
+                    painter: HeartEmojiPainter(type: selectedEmoji, mod: _modifier),
+                  ),
+                ),
+              ),
+        
+              ElevatedButton(
+                onPressed: _toggleTimer, 
+                child: Text("Resize!"),
+              ),
+        
+            ],
           ),
-
-          ElevatedButton(
-            onPressed: _toggleTimer, 
-            child: Text("Resize!"),
-          ),
-
-        ],
+        ),
       ),
     );
   }
@@ -112,8 +127,8 @@ class HeartEmojiPainter extends CustomPainter {
     // Heart base
     final heartPath = Path()
       ..moveTo(center.dx, center.dy + 60)
-      ..cubicTo(center.dx + 110*mod, center.dy - 10*mod, center.dx + 60*mod, center.dy - 120*mod, center.dx*mod, center.dy - 40*mod)
-      ..cubicTo(center.dx - 60*mod, center.dy - 120*mod, center.dx - 110*mod, center.dy - 10*mod, center.dx*mod, center.dy + 60*mod)
+      ..cubicTo(center.dx + 110*mod, center.dy - 10*mod, center.dx + 60*mod, center.dy - 120*mod, center.dx, center.dy - 40*mod)
+      ..cubicTo(center.dx - 60*mod, center.dy - 120*mod, center.dx - 110*mod, center.dy - 10*mod, center.dx, center.dy + 60*mod)
       ..close();
 
     paint.color = type == 'Party Heart' ? const Color(0xFFF48FB1) : const Color(0xFFE91E63);
