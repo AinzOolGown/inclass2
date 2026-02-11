@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 void main() => runApp(const ValentineApp());
@@ -15,14 +17,49 @@ class ValentineApp extends StatelessWidget {
   }
 }
 
-class ValentineHome extends StatefulWidget {
+class ValentineHome extends StatefulWidget  {
   const ValentineHome({super.key});
 
   @override
   State<ValentineHome> createState() => _ValentineHomeState();
 }
 
-class _ValentineHomeState extends State<ValentineHome> {
+class _ValentineHomeState extends State<ValentineHome>  {
+  Timer? _timer;
+  bool _isTimerActive = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _isTimerActive = false;
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel(); // Cancel the timer to prevent memory leaks
+    super.dispose();
+  }
+
+  void _toggleTimer() {
+    if (_isTimerActive) {
+      _timer?.cancel(); // Stop the timer
+    } else {
+      // Start a periodic timer that switches the value every second
+      _timer = Timer.periodic(
+        const Duration(seconds: 1),
+        (Timer timer) {
+          setState(() {
+            // Toggle between "Value A" and "Value B"
+            _modifier = (_modifier == 1.0) ? 1.2 : 1.0;
+          });
+        },
+      );
+    }
+    setState(() {
+      _isTimerActive = !_isTimerActive; // Update the button state
+    });
+  }
+
   final List<String> emojiOptions = ['Sweet Heart', 'Party Heart'];
   String selectedEmoji = 'Sweet Heart';
   double _modifier = 1;
@@ -52,11 +89,7 @@ class _ValentineHomeState extends State<ValentineHome> {
           ),
 
           ElevatedButton(
-            onPressed: (){
-              setState(() {
-                _modifier = 1.2;
-              });
-            }, 
+            onPressed: _toggleTimer, 
             child: Text("Resize!"),
           ),
 
@@ -79,8 +112,8 @@ class HeartEmojiPainter extends CustomPainter {
     // Heart base
     final heartPath = Path()
       ..moveTo(center.dx, center.dy + 60)
-      ..cubicTo(center.dx + 110*mod, center.dy - 10*mod, center.dx + 60*mod, center.dy - 120*mod, center.dx, center.dy - 40*mod)
-      ..cubicTo(center.dx - 60*mod, center.dy - 120*mod, center.dx - 110*mod, center.dy - 10*mod, center.dx, center.dy + 60*mod)
+      ..cubicTo(center.dx + 110*mod, center.dy - 10*mod, center.dx + 60*mod, center.dy - 120*mod, center.dx*mod, center.dy - 40*mod)
+      ..cubicTo(center.dx - 60*mod, center.dy - 120*mod, center.dx - 110*mod, center.dy - 10*mod, center.dx*mod, center.dy + 60*mod)
       ..close();
 
     paint.color = type == 'Party Heart' ? const Color(0xFFF48FB1) : const Color(0xFFE91E63);
