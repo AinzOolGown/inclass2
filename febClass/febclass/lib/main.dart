@@ -25,6 +25,7 @@ class ValentineHome extends StatefulWidget {
 class _ValentineHomeState extends State<ValentineHome> {
   final List<String> emojiOptions = ['Sweet Heart', 'Party Heart'];
   String selectedEmoji = 'Sweet Heart';
+  double _modifier = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -44,11 +45,21 @@ class _ValentineHomeState extends State<ValentineHome> {
           Expanded(
             child: Center(
               child: CustomPaint(
-                size: const Size(300, 300),
-                painter: HeartEmojiPainter(type: selectedEmoji),
+                size: Size(300, 300),
+                painter: HeartEmojiPainter(type: selectedEmoji, mod: _modifier),
               ),
             ),
           ),
+
+          ElevatedButton(
+            onPressed: (){
+              setState(() {
+                _modifier = 1.2;
+              });
+            }, 
+            child: Text("Resize!"),
+          ),
+
         ],
       ),
     );
@@ -56,8 +67,9 @@ class _ValentineHomeState extends State<ValentineHome> {
 }
 
 class HeartEmojiPainter extends CustomPainter {
-  HeartEmojiPainter({required this.type});
+  HeartEmojiPainter({required this.type, double this.mod=1});
   final String type;
+  final double mod;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -67,8 +79,8 @@ class HeartEmojiPainter extends CustomPainter {
     // Heart base
     final heartPath = Path()
       ..moveTo(center.dx, center.dy + 60)
-      ..cubicTo(center.dx + 110, center.dy - 10, center.dx + 60, center.dy - 120, center.dx, center.dy - 40)
-      ..cubicTo(center.dx - 60, center.dy - 120, center.dx - 110, center.dy - 10, center.dx, center.dy + 60)
+      ..cubicTo(center.dx + 110*mod, center.dy - 10*mod, center.dx + 60*mod, center.dy - 120*mod, center.dx, center.dy - 40*mod)
+      ..cubicTo(center.dx - 60*mod, center.dy - 120*mod, center.dx - 110*mod, center.dy - 10*mod, center.dx, center.dy + 60*mod)
       ..close();
 
     paint.color = type == 'Party Heart' ? const Color(0xFFF48FB1) : const Color(0xFFE91E63);
@@ -76,14 +88,14 @@ class HeartEmojiPainter extends CustomPainter {
 
     // Face features (starter)
     final eyePaint = Paint()..color = Colors.white;
-    canvas.drawCircle(Offset(center.dx - 30, center.dy - 10), 10, eyePaint);
-    canvas.drawCircle(Offset(center.dx + 30, center.dy - 10), 10, eyePaint);
+    canvas.drawCircle(Offset(center.dx - 30, center.dy - 10), 10*mod, eyePaint);
+    canvas.drawCircle(Offset(center.dx + 30, center.dy - 10), 10*mod, eyePaint);
 
     final mouthPaint = Paint()
       ..color = Colors.black
       ..style = PaintingStyle.stroke
       ..strokeWidth = 4;
-    canvas.drawArc(Rect.fromCircle(center: Offset(center.dx, center.dy + 20), radius: 30), 0, 3.14, false, mouthPaint);
+    canvas.drawArc(Rect.fromCircle(center: Offset(center.dx, center.dy + 20), radius: 30*mod), 0, 3.14, false, mouthPaint);
 
     // Party hat placeholder (expand for confetti)
     if (type == 'Party Heart') {
@@ -98,5 +110,5 @@ class HeartEmojiPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant HeartEmojiPainter oldDelegate) => oldDelegate.type != type;
+  bool shouldRepaint(covariant HeartEmojiPainter oldDelegate) => oldDelegate.type != type || oldDelegate.mod != mod;
 }
