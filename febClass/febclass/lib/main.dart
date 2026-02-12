@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:confetti/confetti.dart';
 
 void main() => runApp(const ValentineApp());
 
@@ -24,20 +26,109 @@ class ValentineHome extends StatefulWidget  {
   State<ValentineHome> createState() => _ValentineHomeState();
 }
 
-class _ValentineHomeState extends State<ValentineHome>  {
+class _ValentineHomeState extends State<ValentineHome> with TickerProviderStateMixin  {
   Timer? _timer;
   bool _isTimerActive = false;
+
+  late ConfettiController _controllerCenter;
+  final Random _rng = Random();
+
+  // Confetti particle count that increases each click
+  final int _confettiCount = 20;
+
+  // Balloons
+  final List<_Balloon> _balloons = [];
+
+  // Timer for continuous balloon generation
+  Timer? _balloonTimer;
+  bool _isGenerating = false;
 
   @override
   void initState() {
     super.initState();
     _isTimerActive = false;
+    _controllerCenter = ConfettiController(duration: const Duration(seconds: 10));
   }
 
   @override
   void dispose() {
     _timer?.cancel(); // Cancel the timer to prevent memory leaks
+    _controllerCenter.dispose();
+    _balloonTimer?.cancel();
+    for (final balloon in _balloons) {
+      balloon.controller.dispose();
+    }
     super.dispose();
+  }
+
+  void _showConfetti() {
+    _controllerCenter.play();
+  }
+
+  void _addBalloons(int count) {
+    for (var i = 0; i < count; i++) {
+      final id = DateTime.now().microsecondsSinceEpoch + i;
+      final duration = Duration(milliseconds: 3000 + _rng.nextInt(3000));
+      final controller = AnimationController(vsync: this, duration: duration);
+      final animation = Tween<double>(begin: -0.2, end: 1.2).animate(CurvedAnimation(parent: controller, curve: Curves.easeIn));
+      final left = _rng.nextDouble();
+      
+      // Red and pink shades
+      final redPinkColors = const [
+        Color(0xFFFF0000), // bright red
+        Color(0xFFFF1744), // red accent
+        Color(0xFFFF4444), // light red
+        Color(0xFFCC0000), // dark red
+        Color(0xFFFF69B4), // hot pink
+        Color(0xFFFF1493), // deep pink
+        Color(0xFFFFC0CB), // light pink
+        Color(0xFFFFB6C1), // light pink2
+        Color(0xFF990000), // maroon
+        Color(0xFFFF99CC), // pale pink
+      ];
+      final color = redPinkColors[_rng.nextInt(redPinkColors.length)];
+
+      final balloon = _Balloon(id: id, controller: controller, animation: animation, left: left, color: color);
+      setState(() => _balloons.add(balloon));
+
+      controller.addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          controller.dispose();
+          setState(() => _balloons.removeWhere((b) => b.id == id));
+        }
+      });
+
+      controller.forward();
+    }
+  }
+
+  void _startContinuousGeneration() {
+    if (_isGenerating) return;
+    _isGenerating = true;
+
+    // Start confetti and restart every 6 seconds (duration of controller)
+    _controllerCenter.play();
+    Timer.periodic(const Duration(seconds: 6), (timer) {
+      if (_isGenerating) {
+        _controllerCenter.play();
+      } else {
+        timer.cancel();
+      }
+    });
+
+    // Generate 20 balloons every 500ms
+    _balloonTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+      if (_isGenerating) {
+        _addBalloons(20);
+      }
+    });
+  }
+
+  void _stopContinuousGeneration() {
+    _isGenerating = false;
+    _balloonTimer?.cancel();
+    _balloonTimer = null;
+    _controllerCenter.stop();
   }
 
   void _toggleTimer() {
@@ -81,31 +172,88 @@ class _ValentineHomeState extends State<ValentineHome>  {
               title: const Text('Cupid\'s Canvas'),
               backgroundColor: Colors.transparent,
             ),
-          body: Column(
+          body: Stack(
             children: [
-              const SizedBox(height: 16),
-              DropdownButton<String>(
-                value: selectedEmoji,
-                items: emojiOptions
-                    .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                    .toList(),
-                onChanged: (value) => setState(() => selectedEmoji = value ?? selectedEmoji),
-              ),
-              const SizedBox(height: 16),
-              Expanded(
-                child: Center(
-                  child: CustomPaint(
-                    size: Size(300, 300),
-                    painter: HeartEmojiPainter(type: selectedEmoji, mod: _modifier),
+              // Background UI
+              Column(
+                children: [
+                  const SizedBox(height: 16),
+                  DropdownButton<String>(
+                    value: selectedEmoji,
+                    items: emojiOptions
+                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                        .toList(),
+                    onChanged: (value) =>
+                        setState(() => selectedEmoji = value ?? selectedEmoji),
                   ),
+                  const SizedBox(height: 16),
+                  Expanded(
+                    child: Center(
+                      child: CustomPaint(
+                        size: const Size(300, 300),
+                        painter: HeartEmojiPainter(
+                            type: selectedEmoji, mod: _modifier),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (_isGenerating) {
+                        _stopContinuousGeneration();
+                      } else {
+                        _startContinuousGeneration();
+                      }
+                    },
+                    child: Text(_isGenerating ? 'Stop Party!' : 'Drop Balloons!'),
+                  ),
+                  ElevatedButton(
+                    onPressed: _toggleTimer,
+                    child: const Text("Resize!"),
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              ),
+
+              // Confetti layer
+              Align(
+                alignment: Alignment.topCenter,
+                child: ConfettiWidget(
+                  confettiController: _controllerCenter,
+                  blastDirectionality: BlastDirectionality.explosive,
+                  emissionFrequency: 0.5,
+                  numberOfParticles: _confettiCount,
+                  maxBlastForce: 20,
+                  minBlastForce: 5,
+                  gravity: 0.1,
+                  colors: const [
+                    Color(0xFFFFD700),
+                    Color(0xFFC0C0C0),
+                    Color(0xFFB87333),
+                    Color(0xFFE5E4E2),
+                    Color(0xFFB76E79),
+                  ],
                 ),
               ),
-        
-              ElevatedButton(
-                onPressed: _toggleTimer, 
-                child: Text("Resize!"),
-              ),
-        
+
+              // Balloon layer
+              ..._balloons.map((b) {
+                return AnimatedBuilder(
+                  animation: b.controller,
+                  builder: (context, child) {
+                    return Align(
+                      alignment: FractionalOffset(b.left, b.animation.value),
+                      child: SizedBox(
+                        width: 72,
+                        height: 96,
+                        child: CustomPaint(
+                          painter: _BalloonPainter(color: b.color),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              }),
             ],
           ),
         ),
@@ -115,7 +263,7 @@ class _ValentineHomeState extends State<ValentineHome>  {
 }
 
 class HeartEmojiPainter extends CustomPainter {
-  HeartEmojiPainter({required this.type, double this.mod=1});
+  HeartEmojiPainter({required this.type, this.mod = 1});
   final String type;
   final double mod;
 
@@ -159,4 +307,40 @@ class HeartEmojiPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant HeartEmojiPainter oldDelegate) => oldDelegate.type != type || oldDelegate.mod != mod;
+}
+
+class _Balloon {
+  final int id;
+  final AnimationController controller;
+  final Animation<double> animation;
+  final double left; // fraction 0..1
+  final Color color;
+
+  _Balloon({required this.id, required this.controller, required this.animation, required this.left, required this.color});
+}
+
+class _BalloonPainter extends CustomPainter {
+  final Color color;
+  _BalloonPainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = color;
+    final rect = Rect.fromLTWH(0, 0, size.width, size.height * 0.8);
+    final rrect = RRect.fromRectAndRadius(rect, const Radius.circular(18));
+    canvas.drawRRect(rrect, paint);
+
+    // string
+    final path = Path()
+      ..moveTo(size.width / 2, size.height * 0.8)
+      ..lineTo(size.width / 2, size.height);
+    final linePaint = Paint()
+      ..color = Colors.black26
+      ..strokeWidth = 1.5
+      ..style = PaintingStyle.stroke;
+    canvas.drawPath(path, linePaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _BalloonPainter oldDelegate) => oldDelegate.color != color;
 }
