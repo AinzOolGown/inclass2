@@ -91,6 +91,7 @@ class _CounterWidgetState extends State<CounterWidget> {
               setState(() {
                 _counter = value.toInt();
               });
+              updateCounter(value.toInt());
             },
           ),
           Row(
@@ -101,6 +102,7 @@ class _CounterWidgetState extends State<CounterWidget> {
                   setState(() {
                     _counter = (_counter - 1).clamp(0, 100); // Decrement counter
                   });
+                  updateCounter(_counter);
                 },
                 child: Text('-'),
               ),
@@ -113,6 +115,7 @@ class _CounterWidgetState extends State<CounterWidget> {
                   setState(() {
                     _counter = 0; // Reset counter
                   });
+                  updateCounter(0);
                 },
                 child: Text('Reset'),
               ),
@@ -125,6 +128,7 @@ class _CounterWidgetState extends State<CounterWidget> {
                   setState(() {
                     _counter = (_counter + 1).clamp(0, 100); // Increment counter
                   });
+                  updateCounter(_counter);
                 },
                 child: Text('+'),
               ),
@@ -145,10 +149,10 @@ class _CounterWidgetState extends State<CounterWidget> {
 
                       if (newValue != null) {
                         newValue = newValue.clamp(0, 100);
-
                         setState(() {
                           _counter = newValue!;
                         });
+                        updateCounter(newValue);
                       }
 
                       _textController.clear(); //clear after enter/submit
