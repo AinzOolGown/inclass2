@@ -22,12 +22,47 @@ class CounterWidget extends StatefulWidget {
 
 class _CounterWidgetState extends State<CounterWidget> {
   int _counter = 0; // This is our STATE
+  List<int> _history = [0];
+  int _historyIndex = 0;
+
   final TextEditingController _textController = TextEditingController();
 
   @override
   void dispose() {
     _textController.dispose();
     super.dispose();
+  }
+
+  void updateCounter(int newValue) {
+    newValue = newValue.clamp(0, 100);
+
+    setState(() {
+      // Remove future history if we changed after undo
+      _history = _history.sublist(0, _historyIndex + 1);
+
+      _history.add(newValue);
+      _historyIndex++;
+
+      _counter = newValue;
+    });
+  }
+
+  void undo() {
+    if (_historyIndex > 0) {
+      setState(() {
+        _historyIndex--;
+        _counter = _history[_historyIndex];
+      });
+    }
+  }
+
+  void redo() {
+    if (_historyIndex < _history.length - 1) {
+      setState(() {
+        _historyIndex++;
+        _counter = _history[_historyIndex];
+      });
+    }
   }
 
   @override
@@ -70,12 +105,20 @@ class _CounterWidgetState extends State<CounterWidget> {
                 child: Text('-'),
               ),
               ElevatedButton(
+                onPressed: _historyIndex > 0 ? undo : null,
+                child: Text('Undo'),
+              ),
+              ElevatedButton(
                 onPressed: () {
                   setState(() {
                     _counter = 0; // Reset counter
                   });
                 },
                 child: Text('Reset'),
+              ),
+              ElevatedButton(
+                onPressed: _historyIndex < _history.length - 1 ? redo : null,
+                child: Text('Redo'),
               ),
               ElevatedButton(
                 onPressed: () {
@@ -118,7 +161,7 @@ class _CounterWidgetState extends State<CounterWidget> {
                 ),
               ),
             ],
-          )
+          ), 
         ],
       ),
     );
