@@ -22,6 +22,13 @@ class CounterWidget extends StatefulWidget {
 
 class _CounterWidgetState extends State<CounterWidget> {
   int _counter = 0; // This is our STATE
+  final TextEditingController _textController = TextEditingController();
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +77,6 @@ class _CounterWidgetState extends State<CounterWidget> {
                 },
                 child: Text('Reset'),
               ),
-              SizedBox(width: 20),
               ElevatedButton(
                 onPressed: () {
                   setState(() {
@@ -88,16 +94,21 @@ class _CounterWidgetState extends State<CounterWidget> {
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: TextField(
+                    controller: _textController,
                     keyboardType: TextInputType.number,
-                    onChanged: (value) {
+                    textInputAction: TextInputAction.done,
+                    onSubmitted: (value) {
                       int? newValue = int.tryParse(value);
+
                       if (newValue != null) {
-                        if (newValue < 0) newValue = 0; // Ensure counter doesn't go negative
-                        else if (newValue > 100) newValue = 100; // Ensure counter doesn't exceed 100
+                        newValue = newValue.clamp(0, 100);
+
                         setState(() {
-                          _counter = newValue!; // Update counter with user input
+                          _counter = newValue!;
                         });
                       }
+
+                      _textController.clear(); //clear after enter/submit
                     },
                     decoration: InputDecoration(
                       labelText: 'Enter a number',
