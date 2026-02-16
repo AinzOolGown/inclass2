@@ -36,7 +36,7 @@ class _CounterWidgetState extends State<CounterWidget> {
               padding: EdgeInsets.all(20),
               child: Text(
                 '$_counter',
-                style: TextStyle(fontSize: 50.0),
+                style: TextStyle(fontSize: 50.0, color: _counter > 50 ? Colors.green : _counter == 0 ? Colors.red : Colors.black),
               ),
             ),
           ),
