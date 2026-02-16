@@ -80,6 +80,28 @@ class _CounterWidgetState extends State<CounterWidget> {
                 child: Text('+'),
               ),
             ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextField(
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  int? newValue = int.tryParse(value);
+                  if (newValue != null) {
+                    if (newValue < 0) newValue = 0; // Ensure counter doesn't go negative
+                    else if (newValue > 100) newValue = 100; // Ensure counter doesn't exceed 100
+                    setState(() {
+                      _counter = newValue!; // Update counter with user input
+                    });
+                  }
+                },
+                decoration: InputDecoration(
+                  labelText: 'Enter a number',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
           )
         ],
       ),
