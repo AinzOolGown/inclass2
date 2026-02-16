@@ -57,6 +57,14 @@ class _CounterWidgetState extends State<CounterWidget> {
               ElevatedButton(
                 onPressed: () {
                   setState(() {
+                    _counter -= 1; // Decrement counter
+                  });
+                },
+                child: Text('-'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
                     _counter = 0; // Reset counter
                   });
                 },
@@ -69,7 +77,7 @@ class _CounterWidgetState extends State<CounterWidget> {
                     _counter += 1; // Increment counter
                   });
                 },
-                child: Text('Increment'),
+                child: Text('+'),
               ),
             ],
           )
