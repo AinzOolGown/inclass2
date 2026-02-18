@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 void main() {
   runApp(MaterialApp(
@@ -17,7 +18,9 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
   String petName = "Your Pet";
   int happinessLevel = 10;
   int hungerLevel = 50;
+  
   Color _contColor = Colors.redAccent;
+  Timer? _hungerTimer;
 
   void _changeColor() {
     setState(() {
@@ -56,6 +59,7 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
         happinessLevel -= 20;
       }
     });
+    _changeColor();
   }
 
   void _renamePet() {
@@ -92,6 +96,44 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
     );
   }
 
+  @override
+  void initState() {
+    super.initState();
+    hungerLevel = hungerLevel.clamp(0, 100);
+    happinessLevel = happinessLevel.clamp(0, 100);
+
+    _hungerTimer = Timer.periodic(Duration(seconds: 30), (timer) {
+      setState(() {
+        hungerLevel += 10;
+
+        if (hungerLevel > 100) {
+          hungerLevel = 100;
+          happinessLevel -= 10;
+        }
+      
+        _changeColor();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _hungerTimer?.cancel();
+    super.dispose();
+  }
+
+
+
+  String get petMood {
+    if (happinessLevel >= 70 && hungerLevel < 50) {
+      return "🙂 Happy";
+    } else if (happinessLevel >= 30) {
+      return "😐 Neutral";
+    } else {
+      return "🙁 Unhappy";
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +148,7 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
             GestureDetector(
               onTap: _renamePet,
               child: Text(
-                'Name: $petName',
+                '$petName',
                 style: TextStyle(
                   fontSize: 20.0,
                   decoration: TextDecoration.underline,
@@ -114,7 +156,12 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
                 ),
               ),
             ),
-            
+
+            SizedBox(height: 8.0),
+            Text(
+              'Mood: $petMood',
+              style: TextStyle(fontSize: 12),
+            ),
             SizedBox(height: 16.0),
 
             Container(
