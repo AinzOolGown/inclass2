@@ -25,7 +25,6 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
     });
   }
 
-
   void _playWithPet() {
     setState(() {
       happinessLevel += 10;
@@ -59,6 +58,41 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
     });
   }
 
+  void _renamePet() {
+    TextEditingController controller = TextEditingController(text: petName);
+    //pop up dialog to rename pet
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Rename Your Pet'),
+          content: TextField(
+            controller: controller,
+            decoration: InputDecoration(
+              hintText: 'Enter pet name',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  petName = controller.text.isEmpty ? petName : controller.text;
+                });
+                Navigator.pop(context);
+              },
+              child: Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,7 +103,18 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('Name: $petName', style: TextStyle(fontSize: 20.0)),
+            GestureDetector(
+              onTap: _renamePet,
+              child: Text(
+                'Name: $petName',
+                style: TextStyle(
+                  fontSize: 20.0,
+                  decoration: TextDecoration.underline,
+                  color: Colors.blue,
+                ),
+              ),
+            ),
+            
             SizedBox(height: 16.0),
 
             Container(
