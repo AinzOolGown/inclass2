@@ -62,6 +62,20 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
           children: <Widget>[
             Text('Name: $petName', style: TextStyle(fontSize: 20.0)),
             SizedBox(height: 16.0),
+
+            Container(
+              width: 150,
+              height: 150,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: happinessLevel > 70 ? Colors.greenAccent : happinessLevel > 30 ? Colors.orangeAccent : Colors.redAccent,
+              ),
+              child: Image.asset(
+                'fox.png',
+                fit: BoxFit.cover,
+              ),
+            ),
+
             Text('Happiness Level: $happinessLevel', style: TextStyle(fontSize: 20.0)),
             SizedBox(height: 16.0),
             Text('Hunger Level: $hungerLevel', style: TextStyle(fontSize: 20.0)),
