@@ -15,8 +15,16 @@ class DigitalPetApp extends StatefulWidget {
 
 class _DigitalPetAppState extends State<DigitalPetApp> {
   String petName = "Your Pet";
-  int happinessLevel = 50;
+  int happinessLevel = 10;
   int hungerLevel = 50;
+  Color _contColor = Colors.redAccent;
+
+  void _changeColor() {
+    setState(() {
+      _contColor = happinessLevel > 70 ? Colors.greenAccent : happinessLevel > 30 ? Colors.orangeAccent : Colors.redAccent;
+    });
+  }
+
 
   void _playWithPet() {
     setState(() {
@@ -38,6 +46,7 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
     } else {
       happinessLevel += 10;
     }
+    _changeColor();
   }
 
   void _updateHunger() {
@@ -68,11 +77,11 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
               height: 150,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: happinessLevel > 70 ? Colors.greenAccent : happinessLevel > 30 ? Colors.orangeAccent : Colors.redAccent,
+                color: _contColor,
               ),
               child: Image.asset(
-                'fox.png',
-                fit: BoxFit.cover,
+                'assets/fox.png',
+                fit: BoxFit.scaleDown,
               ),
             ),
 
