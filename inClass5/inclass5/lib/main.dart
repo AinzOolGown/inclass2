@@ -24,7 +24,13 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
 
   void _changeColor() {
     setState(() {
-      _contColor = happinessLevel > 70 ? Colors.greenAccent : happinessLevel > 30 ? Colors.orangeAccent : Colors.redAccent;
+      if (hungerLevel < 50 && happinessLevel > 80) {
+        _contColor = Colors.greenAccent;
+      } else if (hungerLevel < 90 && happinessLevel > 30) {
+        _contColor = Colors.orangeAccent;
+      } else {
+        _contColor = Colors.redAccent;
+      }
     });
   }
 
@@ -102,9 +108,9 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
     hungerLevel = hungerLevel.clamp(0, 100);
     happinessLevel = happinessLevel.clamp(0, 100);
 
-    _hungerTimer = Timer.periodic(Duration(seconds: 30), (timer) {
+    _hungerTimer = Timer.periodic(Duration(seconds: 10), (timer) {
       setState(() {
-        hungerLevel += 10;
+        hungerLevel += 5;
 
         if (hungerLevel > 100) {
           hungerLevel = 100;
