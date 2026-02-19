@@ -50,6 +50,8 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
   }
 
   void _playWithPet() {
+    if (!_consumeActionPoint()) return;
+
     setState(() {
       happinessLevel += 10;
       _updateHunger();
@@ -60,6 +62,8 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
   }
 
   void _feedPet() {
+    if (!_consumeActionPoint()) return;
+
     setState(() {
       hungerLevel -= 10;
       _updateHappiness();
@@ -266,6 +270,23 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(_maxActionPoints, (index) {
+                return Container(
+                  margin: EdgeInsets.symmetric(horizontal: 4),
+                  width: 30,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: index < _actionPoints ? Colors.green : Colors.grey[300],
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                );
+              }),
+            ),
+
+            SizedBox(height: 16),
+
             GestureDetector(
               onTap: _renamePet,
               child: Text(
