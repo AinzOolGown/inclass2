@@ -21,9 +21,21 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
   String petName = "Your Pet";
   int happinessLevel = 10;
   int hungerLevel = 50;
+  int _actionPoints = 0;
+  final int _maxActionPoints = 4;
+  Timer? _actionTimer;
   
   Color _contColor = Colors.redAccent;
   Timer? _hungerTimer;
+
+  bool _consumeActionPoint() {
+    if (_actionPoints > 0) {
+      _actionPoints--;
+      return true;
+    }
+    return false;
+  }
+
 
   void _changeColor() {
     setState(() {
@@ -129,11 +141,19 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
         _checkWinCondition();
       });
     });
+    _actionTimer = Timer.periodic(Duration(seconds: 5), (timer) {
+      if (_actionPoints < _maxActionPoints) {
+        setState(() {
+          _actionPoints++;
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
     _hungerTimer?.cancel();
+    _actionTimer?.cancel();
     super.dispose();
   }
 
