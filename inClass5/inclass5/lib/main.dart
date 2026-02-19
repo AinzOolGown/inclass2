@@ -58,6 +58,7 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
       _changeColor();
       _checkGameOver();
       _checkWinCondition();
+      happinessLevel = happinessLevel.clamp(0, 100);
     });
   }
 
@@ -70,6 +71,7 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
       _changeColor();
       _checkGameOver();
       _checkWinCondition();
+      hungerLevel = hungerLevel.clamp(0, 100);
     });
   }
 
@@ -79,6 +81,7 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
     } else {
       happinessLevel += 10;
     }
+    happinessLevel = happinessLevel.clamp(0, 100);
   }
 
   void _updateHunger() {
@@ -89,6 +92,7 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
         happinessLevel -= 20;
       }
     });
+    hungerLevel = hungerLevel.clamp(0, 100);
   }
 
   void _renamePet() {
