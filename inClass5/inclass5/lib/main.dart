@@ -15,6 +15,7 @@ class DigitalPetApp extends StatefulWidget {
 }
 
 class _DigitalPetAppState extends State<DigitalPetApp> {
+  bool _isGameOver = false;
   String petName = "Your Pet";
   int happinessLevel = 10;
   int hungerLevel = 50;
@@ -38,6 +39,8 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
     setState(() {
       happinessLevel += 10;
       _updateHunger();
+      _changeColor();
+      _checkGameOver();
     });
   }
 
@@ -45,6 +48,8 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
     setState(() {
       hungerLevel -= 10;
       _updateHappiness();
+      _changeColor();
+      _checkGameOver();
     });
   }
 
@@ -54,7 +59,6 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
     } else {
       happinessLevel += 10;
     }
-    _changeColor();
   }
 
   void _updateHunger() {
@@ -65,7 +69,6 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
         happinessLevel -= 20;
       }
     });
-    _changeColor();
   }
 
   void _renamePet() {
@@ -128,8 +131,6 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
     super.dispose();
   }
 
-
-
   String get petMood {
     if (happinessLevel >= 70 && hungerLevel < 50) {
       return "🙂 Happy";
@@ -139,6 +140,52 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
       return "🙁 Unhappy";
     }
   }
+
+  void _checkGameOver() {
+    if (!_isGameOver && happinessLevel <= 10 && hungerLevel >= 100) {
+      _isGameOver = true;
+
+      _hungerTimer?.cancel();
+
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Game Over"),
+            content: Text("Your pet was neglected and ran away 😢"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _restartGame();
+                },
+                child: Text("Restart"),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+  void _restartGame() {
+    setState(() {
+      happinessLevel = 50;
+      hungerLevel = 50;
+      _isGameOver = false;
+    });
+
+    _hungerTimer = Timer.periodic(Duration(seconds: 10), (timer) {
+      setState(() {
+        hungerLevel += 5;
+        hungerLevel = hungerLevel.clamp(0, 100);
+        happinessLevel = happinessLevel.clamp(0, 100);
+        _checkGameOver();
+      });
+    });
+  }
+
 
 
   @override
