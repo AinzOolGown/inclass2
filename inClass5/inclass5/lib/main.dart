@@ -15,6 +15,8 @@ class DigitalPetApp extends StatefulWidget {
 }
 
 class _DigitalPetAppState extends State<DigitalPetApp> {
+  Timer? _winTimer;
+  bool _hasWon = false;
   bool _isGameOver = false;
   String petName = "Your Pet";
   int happinessLevel = 10;
@@ -41,6 +43,7 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
       _updateHunger();
       _changeColor();
       _checkGameOver();
+      _checkWinCondition();
     });
   }
 
@@ -50,6 +53,7 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
       _updateHappiness();
       _changeColor();
       _checkGameOver();
+      _checkWinCondition();
     });
   }
 
@@ -121,6 +125,8 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
         }
       
         _changeColor();
+        _checkGameOver();
+        _checkWinCondition();
       });
     });
   }
@@ -168,6 +174,48 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
       );
     }
   }
+
+  void _checkWinCondition() {
+    if (_hasWon || _isGameOver) return;
+
+    if (happinessLevel > 80) {
+      if (_winTimer == null) {
+        _winTimer = Timer(Duration(minutes: 3), () {
+          _showWinDialog();
+        });
+      }
+    } else {
+      _winTimer?.cancel();
+      _winTimer = null;
+    }
+  }
+
+  void _showWinDialog() {
+    _hasWon = true;
+    _hungerTimer?.cancel();
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("You Win 🎉"),
+          content: Text("Your pet is thriving and loves you!"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _restartGame();
+              },
+              child: Text("Play Again"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
 
   void _restartGame() {
     setState(() {
