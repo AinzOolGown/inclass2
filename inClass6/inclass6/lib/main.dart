@@ -25,6 +25,19 @@ class CounterWidget extends StatefulWidget {
 class _CounterWidgetState extends State<CounterWidget> {
   // set counter value
   int _counter = 0;
+  Color _contColor = Colors.red;
+
+  void _changeColor() {
+    setState(() {
+      if (_counter == 0) {
+        _contColor = Colors.red;
+      } else if (_counter < 50 && _counter > 1) {
+        _contColor = Colors.orange;
+      } else if (_counter >= 50 && _counter < 100){
+        _contColor = Colors.green;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,17 +57,27 @@ class _CounterWidgetState extends State<CounterWidget> {
               ),
             ),
           ),
-          Slider(
-            min: 0,
-            max: 100,
-            value: _counter.toDouble(),
-            onChanged: (double value) {
-              setState(() {
-                _counter = value.toInt();
-              });
-            },
-            activeColor: Colors.blue,
-            inactiveColor: Colors.red,
+          SliderTheme(
+            data: SliderThemeData(
+              valueIndicatorTextStyle: TextStyle(
+                color: _contColor,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            child: Slider(
+              min: 0,
+              max: 100,
+              value: _counter.toDouble(),
+              onChanged: (double value) {
+                setState(() {
+                  _counter = value.toInt();
+                });
+                _changeColor();
+              },
+              activeColor: Colors.blue,
+              inactiveColor: Colors.red,
+            ),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
