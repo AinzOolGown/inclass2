@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 void main() => runApp(const MyApp());
@@ -24,7 +26,7 @@ class CounterWidget extends StatefulWidget {
 
 class _CounterWidgetState extends State<CounterWidget> {
   // set counter value
-  int _counter = 0;
+  int _counter = clampDouble(0, 0, 100).toInt();
   Color _contColor = Colors.red;
 
   void _changeColor() {
@@ -53,31 +55,22 @@ class _CounterWidgetState extends State<CounterWidget> {
               color: Colors.blue,
               child: Text(
                 '$_counter',
-                style: const TextStyle(fontSize: 50.0),
+                style: TextStyle(fontSize: 50.0, color: _contColor),
               ),
             ),
           ),
-          SliderTheme(
-            data: SliderThemeData(
-              valueIndicatorTextStyle: TextStyle(
-                color: _contColor,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            child: Slider(
-              min: 0,
-              max: 100,
-              value: _counter.toDouble(),
-              onChanged: (double value) {
-                setState(() {
-                  _counter = value.toInt();
-                });
-                _changeColor();
-              },
-              activeColor: Colors.blue,
-              inactiveColor: Colors.red,
-            ),
+          Slider(
+            min: 0,
+            max: 100,
+            value: _counter.toDouble(),
+            onChanged: (double value) {
+              setState(() {
+                _counter = value.toInt();
+              });
+              _changeColor();
+            },
+            activeColor: Colors.blue,
+            inactiveColor: Colors.red,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -87,6 +80,7 @@ class _CounterWidgetState extends State<CounterWidget> {
                   setState(() {
                     _counter = 0;
                   });
+                  _changeColor();
                 },
                 child: const Text('Abort'),
               ),
@@ -96,6 +90,7 @@ class _CounterWidgetState extends State<CounterWidget> {
                   setState(() {
                     _counter -= 5;
                   });
+                  _changeColor();
                 },
                 child: const Text('Throttle Down'),
               ),
@@ -105,6 +100,7 @@ class _CounterWidgetState extends State<CounterWidget> {
                   setState(() {
                     _counter += 1;
                   });
+                  _changeColor();
                 },
                 child: const Text('Ignite'),
               ),
