@@ -15,7 +15,25 @@ class DetailsScreen extends StatelessWidget {
           children: [
             // Hero image
             Image.asset(recipe.imagePath, height: 220, width: double.infinity, fit: BoxFit.cover),
-            // Name, Ingredients, Instructions…
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                recipe.name,
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                "Ingredients",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
           ],
         ),
       ),
