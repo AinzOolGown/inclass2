@@ -34,6 +34,33 @@ class DetailsScreen extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(height: 8),
+            ...recipe.ingredients.map(
+              (ingredient) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                child: Text("• $ingredient"),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                "Instructions",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                recipe.instructions,
+                style: const TextStyle(fontSize: 16),
+              ),
+            ),
+            const SizedBox(height: 16),
           ],
         ),
       ),
