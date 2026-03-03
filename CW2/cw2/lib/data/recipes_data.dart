@@ -15,13 +15,13 @@ final List<Recipe> sampleRecipes = [
   ),
   Recipe(
     name: 'Chicken Alfredo',
-    imagePath: 'assets/images/chicken_alfredo.jpg',
+    imagePath: 'assets/images/chikenalf.jpg',
     ingredients: ['Fettuccine', 'Chicken breast', 'Heavy cream', 'Parmesan cheese', 'Butter'],
     instructions: 'Cook fettuccine. Cook chicken. Make Alfredo sauce with cream and cheese. Combine & serve.',
   ),
   Recipe(
     name: 'Vegetable Stir Fry',
-    imagePath: 'assets/images/vegetable_stir_fry.jpg',
+    imagePath: 'assets/images/vegstir.jpg',
     ingredients: ['Broccoli', 'Bell peppers', 'Carrots', 'Soy sauce', 'Ginger'],
     instructions: 'Stir fry vegetables. Add soy sauce and ginger. Serve over rice.',
   ),
