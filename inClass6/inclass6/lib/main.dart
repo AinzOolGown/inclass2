@@ -54,7 +54,7 @@ class _CounterWidgetState extends State<CounterWidget> {
             child: Container(
               color: Colors.blue,
               child: Text(
-                '$_counter',
+                _counter == 100 ? 'Liftoff!' : '$_counter',
                 style: TextStyle(fontSize: 50.0, color: _contColor),
               ),
             ),
@@ -88,7 +88,7 @@ class _CounterWidgetState extends State<CounterWidget> {
               ElevatedButton(
                 onPressed: () {
                   setState(() {
-                    _counter -= 5;
+                    _counter = (_counter - 5).clamp(0, 100);
                   });
                   _changeColor();
                 },
@@ -98,7 +98,7 @@ class _CounterWidgetState extends State<CounterWidget> {
               ElevatedButton(
                 onPressed: () {
                   setState(() {
-                    _counter += 1;
+                    _counter = (_counter + 1).clamp(0, 100);
                   });
                   _changeColor();
                 },
