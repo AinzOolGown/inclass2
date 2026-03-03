@@ -16,7 +16,7 @@ class HomeScreen extends StatelessWidget {
           return Card(
             child: ListTile(
               leading: Image.asset(recipe.imagePath, width: 56, fit: BoxFit.cover),
-              title:   Text(recipe.name),
+              title: Text(recipe.name),
               trailing: const Icon(Icons.chevron_right),
               onTap: () {
                 Navigator.push(
